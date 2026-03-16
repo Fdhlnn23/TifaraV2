@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TIFARA — Netflix Original Series</title>
+  <link rel="stylesheet" href="assets/css/style.css"/>
+  <link rel="icon" type="image/png" href="assets/img/logonetflix.png">
+</head>
+<body>
+
+<!-- ══════════════════════════════════
+     NAVBAR
+══════════════════════════════════ -->
+<nav id="navbar">
+  <div class="nav-inner">
+
+    <a class="nav-logo" onclick="scrollToSection('home')">
+      <img src="assets/img/logonetflix.png" width="36" height="36"/>
+      <span class="nav-logo-text">TIFARA</span>
+    </a>
+
+    <div class="nav-links" id="navLinks">
+      <button onclick="scrollToSection('home')"     data-sec="home"     class="active">Home</button>
+      <button onclick="scrollToSection('tentang')"  data-sec="tentang">Tentang</button>
+      <button onclick="scrollToSection('struktur')" data-sec="struktur">Struktur</button>
+      <button onclick="scrollToSection('anggota')"  data-sec="anggota">Anggota</button>
+      <button onclick="scrollToSection('prestasi')" data-sec="prestasi">Prestasi</button>
+    </div>
+
+    <div class="nav-avatar">TF</div>
+
+    <button class="nav-ham" onclick="toggleMenu()">☰</button>
+  </div>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <button onclick="scrollToSection('home');     toggleMenu()">Home</button>
+    <button onclick="scrollToSection('tentang');  toggleMenu()">Tentang</button>
+    <button onclick="scrollToSection('struktur'); toggleMenu()">Struktur</button>
+    <button onclick="scrollToSection('anggota');  toggleMenu()">Anggota</button>
+    <button onclick="scrollToSection('prestasi'); toggleMenu()">Prestasi</button>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════
+     HERO
+══════════════════════════════════ -->
+<section id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-grain"></div>
+  <div class="hero-vignette"></div>
+  <div class="hero-fade-bottom"></div>
+  <div class="hero-fade-left"></div>
+
+  <div class="hero-grid" id="heroGrid"></div>
+
+  <div class="hero-content">
+    <div class="hero-badge"><span>ORIGINAL SERIES</span></div>
+
+    <h1 class="hero-title">TIFARA</h1>
+
+    <div class="hero-meta">
+      <span class="match">99% Match</span>
+      <span class="year">2026</span>
+      <span class="badge-tv">TV-G</span>
+      <span class="year">1 Season</span>
+      <span class="hd">HD</span>
+    </div>
+
+    <p class="hero-desc">
+      Kisah 32 mahasiswa luar biasa yang berjuang, bertumbuh, dan menciptakan kenangan
+      tak terlupakan bersama. Sebuah series tentang persahabatan, prestasi, dan petualangan
+      kampus yang nyata.
+    </p>
+
+    <div class="hero-btns">
+      <button class="btn-play" onclick="scrollToSection('anggota')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="black"><polygon points="5,3 19,12 5,21"/></svg>
+        PLAY
+      </button>
+      <button class="btn-info" onclick="scrollToSection('tentang')">
+        <svg width="20" height="20" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" stroke="white" stroke-width="2" fill="none"/>
+          <line x1="12" y1="8" x2="12" y2="16" stroke="white" stroke-width="2"/>
+          <line x1="8"  y1="12" x2="16" y2="12" stroke="white" stroke-width="2"/>
+        </svg>
+        INFO
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     ABOUT
+══════════════════════════════════ -->
+<section id="tentang">
+  <div class="about-inner">
+    <div class="section-header">
+      <div class="section-bar"></div>
+      <h2 class="section-title">TENTANG KELAS</h2>
+    </div>
+
+    <div class="about-grid">
+      <div class="about-main">
+        <div class="about-label">SYNOPSIS</div>
+        <h3 class="about-h3">TIFARA: NEVER DIE</h3>
+        <p class="about-desc">
+          Sebuah kisah nyata tentang 32 mahasiswa yang bersatu dalam satu kelas bernama TIFARA.
+          Penuh dengan dinamika pertemanan, perjuangan akademik, dan momen-momen yang akan
+          dikenang selamanya. Di sini, setiap hari adalah episode baru yang penuh kejutan.
+        </p>
+        <div class="about-stats">
+          <div><div class="stat-num">32</div><div class="stat-label">Karakter</div></div>
+          <div><div class="stat-num">21</div><div class="stat-label">Putra</div></div>
+          <div><div class="stat-num">11</div><div class="stat-label">Putri</div></div>
+        </div>
+      </div>
+
+      <div class="about-side">
+        <div class="card-box">
+          <div class="card-label">DETAIL</div>
+          <div class="detail-row"><span class="detail-key">Genre:</span> <span class="detail-val">Drama, Edu, Comedy</span></div>
+          <div class="detail-row"><span class="detail-key">Tahun:</span> <span class="detail-val">2026</span></div>
+          <div class="detail-row"><span class="detail-key">Rating:</span><span class="detail-val">TV-G</span></div>
+          <div class="detail-row"><span class="detail-key">Status:</span><span class="detail-val" style="color:#46d369">Ongoing ✦</span></div>
+        </div>
+
+        <div class="card-box">
+          <div class="card-label">MEDIA SOSIAL</div>
+          <a class="social-link" href="https://www.instagram.com/tifara_untara25" target="_blank" rel="noreferrer">
+            <div class="social-icon" style="background:linear-gradient(135deg,#f09433,#dc2743,#bc1888)">📸</div>
+            <div>
+              <div class="social-name">Instagram</div>
+              <div class="social-handle">@tifara_untara</div>
+            </div>
+            <span class="social-arrow">›</span>
+          </a>
+          <a class="social-link" href="https://www.tiktok.com/@tifara_untara" target="_blank" rel="noreferrer">
+            <div class="social-icon" style="background:linear-gradient(135deg,#010101,#69C9D0)">🎵</div>
+            <div>
+              <div class="social-name">TikTok</div>
+              <div class="social-handle">@tifara_untara</div>
+            </div>
+            <span class="social-arrow">›</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     STRUCTURE (filled by JS)
+══════════════════════════════════ -->
+<section id="struktur">
+  <div class="structure-inner" id="structureContainer"></div>
+</section>
+
+<!-- ══════════════════════════════════
+     MEMBERS (filled by JS)
+══════════════════════════════════ -->
+<section id="anggota">
+  <div class="members-inner">
+    <div style="padding:0 4%;margin-bottom:40px;display:flex;align-items:center;gap:12px">
+      <div class="section-bar"></div>
+      <h2 class="section-title">SEMUA KARAKTER</h2>
+    </div>
+    <div id="rowsContainer"></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     ACHIEVEMENTS (filled by JS)
+══════════════════════════════════ -->
+<section id="prestasi">
+  <div class="achiev-inner">
+    <div class="section-header">
+      <div class="section-bar"></div>
+      <h2 class="section-title">AWARDS & PRESTASI</h2>
+    </div>
+    <div class="achiev-grid" id="achievGrid"></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     FOOTER
+══════════════════════════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+
+      <div>
+        <div class="footer-brand">
+          <svg width="24" height="24" viewBox="0 0 111 190" fill="none">
+            <path d="M0 0h38.5l36 96.5L74.5 0H111v190H74.5l-.5-95L37.5 190H0V0z" fill="#e50914"/>
+          </svg>
+          <span class="footer-brand-text">TIFARA</span>
+        </div>
+        <p class="footer-desc">
+          Dalam lembaran hidup kita, kuliah adalah bab yang takkan pernah terlupakan.
+          #TifaraNeverDie
+        </p>
+      </div>
+
+      <div>
+        <div class="footer-heading">NAVIGASI</div>
+        <button class="footer-link" onclick="scrollToSection('home')">home</button>
+        <button class="footer-link" onclick="scrollToSection('tentang')">tentang</button>
+        <button class="footer-link" onclick="scrollToSection('struktur')">struktur</button>
+        <button class="footer-link" onclick="scrollToSection('anggota')">anggota</button>
+        <button class="footer-link" onclick="scrollToSection('prestasi')">prestasi</button>
+      </div>
+
+      <div>
+        <div class="footer-heading">SOSIAL</div>
+        <a class="footer-link red" href="https://www.instagram.com/tifara_untara" target="_blank" rel="noreferrer">Instagram</a>
+        <a class="footer-link red" href="https://www.tiktok.com/@tifara_untara"   target="_blank" rel="noreferrer">TikTok</a>
+      </div>
+
+      <div>
+        <div class="footer-heading">KONTAK</div>
+        <div style="font-size:14px;color:rgba(255,255,255,0.35);line-height:2">
+          <div>Kab. Tangerang, Solear</div>
+          <div style="color:#e50914">ahmadfadhlan2307@gmail.com</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2025 TIFARA. All rights reserved.</span>
+      <span class="footer-copy">Website by Adan — Netflix Theme 🎬</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/server.js"></script>
+</body>
+</html>
