@@ -416,6 +416,31 @@ function closePhotoModal() {
   document.body.style.overflow = "";
 }
 
+const audio = document.getElementById('bgMusic');
+  const musicIcon = document.getElementById('musicIcon');
+  let isPlaying = false;
+
+  function toggleMusic() {
+    if (isPlaying) {
+      audio.pause();
+      musicIcon.innerHTML = "🔈"; // Icon Mute
+    } else {
+      audio.play();
+      musicIcon.innerHTML = "🔊"; // Icon Play
+    }
+    isPlaying = !isPlaying;
+  }
+
+  // Menangani Auto-play: Musik akan jalan otomatis saat user pertama kali klik di mana saja
+  window.addEventListener('click', () => {
+    if (!isPlaying) {
+      audio.play().then(() => {
+        isPlaying = true;
+        musicIcon.innerHTML = "🔊";
+      }).catch(error => console.log("Autoplay dicegah browser"));
+    }
+  }, { once: true }); // {once: true} artinya trigger ini cuma jalan sekali
+
 /* ═══════════════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════════════ */
