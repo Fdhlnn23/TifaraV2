@@ -26,7 +26,7 @@ const MEMBERS = [
   { id:22, name:"Keisya Cintya Putri",    role:"Wakil Ketua",                  tag:"Action",     rating:"99%", photo:"assets/img/keisya.png",        ig:"https://instagram.com/tifara_untara25" },
   { id:23, name:"Lia Noviana",            role:"PJ Sistem Digital",            tag:"Tech",       rating:"99%", photo:"assets/img/lia.png",           ig:"https://instagram.com/vy_livianaaa" },
   { id:24, name:"Rian Permana",           role:"Anggota Aktif",                tag:"Action",     rating:"99%", photo:"assets/img/rian.png",          ig:"https://instagram.com/tifara_untara25" },
-  { id:25, name:"Muhamad Bilal Islami",   role:"Anggota Aktif",                tag:"Thriller",   rating:"99%", photo:"assets/img/bilal.png",         ig:"https://instagram.com/tifara_untara25" },
+  { id:25, name:"Muhamad Bilal Islami",   role:"Anggota Aktif",                tag:"Thriller",   rating:"99%", photo:"assets/img/bilal.png",         ig:"https://instagram.com/mbilalislami" },
   { id:26, name:"Wahyu Putra Raihan",     role:"PJ Etika Profesi",             tag:"Mystery",    rating:"99%", photo:"assets/img/wahyu.png",         ig:"https://instagram.com/tifara_untara25" },
   { id:27, name:"M. Nurul Furqon",        role:"Anggota Aktif",                tag:"Spiritual",  rating:"99%", photo:"assets/img/furqon.png",        ig:"https://instagram.com/tifara_untara25" },
   { id:28, name:"Naufal Syauqi",          role:"PJ Matematika Diskrit",        tag:"Mystery",    rating:"99%", photo:"assets/img/nopal.png",         ig:"https://instagram.com/tifara_untara25" },
@@ -38,7 +38,7 @@ const MEMBERS = [
 ];
 
 const STRUCTURE = [
-  { role:"Wali Kelas",                     name:"Kevin Septianzah, S.Kom., M.Kom", level:0, icon:"👨‍🏫" },
+  { role:"Dosen Pembimbing",                     name:"Kevin Septianzah, S.Kom., M.Kom", level:0, icon:"👨‍🏫" },
   { role:"Ketua Kelas",                    name:"Samuel",                          level:1, icon:"👑" },
   { role:"Wakil Ketua",                    name:"Keisya Cintya Putri",             level:1, icon:"⭐" },
   { role:"Sekretaris",                     name:"Intan Aulia M.",                  level:2, icon:"📝" },
