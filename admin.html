@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TIFARA — Admin Panel</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+    :root {
+      --red: #e50914;
+      --red-dark: #b20710;
+      --bg: #0a0a0a;
+      --bg2: #141414;
+      --bg3: #1e1e1e;
+      --bg4: #2a2a2a;
+      --border: rgba(255,255,255,0.08);
+      --text: #e5e5e5;
+      --muted: rgba(255,255,255,0.4);
+      --success: #46d369;
+      --warn: #ff9900;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── LOGIN ── */
+    #loginScreen {
+      position: fixed; inset:0; background: var(--bg);
+      display: flex; align-items: center; justify-content: center; z-index:9999;
+    }
+    .login-box {
+      width: 360px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 40px 36px;
+      text-align: center;
+    }
+    .login-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 42px;
+      color: var(--red);
+      letter-spacing: 3px;
+      margin-bottom: 4px;
+    }
+    .login-sub { color: var(--muted); font-size:13px; margin-bottom:32px; }
+    .login-box input {
+      width:100%; background: var(--bg3); border: 1px solid var(--border);
+      color: var(--text); border-radius:8px; padding:12px 16px;
+      font-family: 'DM Sans', sans-serif; font-size:15px;
+      margin-bottom: 12px; outline:none; transition:.2s;
+    }
+    .login-box input:focus { border-color: var(--red); }
+    .login-box button {
+      width:100%; background: var(--red); color:#fff; border:none;
+      border-radius:8px; padding:13px; font-family:'DM Sans',sans-serif;
+      font-size:15px; font-weight:600; cursor:pointer; transition:.2s;
+    }
+    .login-box button:hover { background: var(--red-dark); }
+    .login-error { color:#ff6b6b; font-size:13px; margin-top:10px; display:none; }
+
+    /* ── LAYOUT ── */
+    #adminApp { display:none; min-height:100vh; }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      position: fixed; left:0; top:0; bottom:0; width:220px;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction:column;
+      z-index: 100;
+    }
+    .sidebar-logo {
+      padding: 24px 20px 20px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px; color: var(--red); letter-spacing:3px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-logo span { font-size:11px; color:var(--muted); display:block; letter-spacing:1px; font-family:'DM Sans',sans-serif; margin-top:2px; }
+    .sidebar-nav { flex:1; padding:16px 0; overflow-y:auto; }
+    .nav-item {
+      display:flex; align-items:center; gap:10px;
+      padding:11px 20px; cursor:pointer;
+      color:var(--muted); font-size:14px; font-weight:500;
+      transition:.15s; border-left:3px solid transparent;
+    }
+    .nav-item:hover { color:var(--text); background: rgba(255,255,255,0.04); }
+    .nav-item.active { color:var(--text); border-left-color:var(--red); background: rgba(229,9,20,0.08); }
+    .nav-item .icon { font-size:16px; width:20px; text-align:center; }
+    .sidebar-footer {
+      padding:16px 20px;
+      border-top: 1px solid var(--border);
+      font-size:12px; color:var(--muted);
+    }
+    .btn-logout {
+      display:flex; align-items:center; gap:8px;
+      color:#ff6b6b; cursor:pointer; font-size:13px; font-weight:500;
+      padding:8px 0; background:none; border:none; font-family:'DM Sans',sans-serif;
+      transition:.15s;
+    }
+    .btn-logout:hover { color:#ff4444; }
+
+    /* ── MAIN ── */
+    .main-content {
+      margin-left: 220px;
+      padding: 32px 36px;
+      min-height: 100vh;
+    }
+
+    .page { display:none; }
+    .page.active { display:block; }
+
+    .page-header {
+      display:flex; align-items:center; justify-content:space-between;
+      margin-bottom:28px;
+    }
+    .page-title {
+      font-family:'Bebas Neue',sans-serif; font-size:32px;
+      letter-spacing:2px; color:var(--text);
+    }
+    .page-title span { color:var(--red); }
+
+    /* ── STAT CARDS ── */
+    .stat-grid {
+      display:grid; grid-template-columns:repeat(4,1fr); gap:16px;
+      margin-bottom:32px;
+    }
+    .stat-card {
+      background:var(--bg2); border:1px solid var(--border);
+      border-radius:10px; padding:20px 22px;
+    }
+    .stat-card .s-label { font-size:12px; color:var(--muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:.5px; }
+    .stat-card .s-val { font-family:'Bebas Neue',sans-serif; font-size:36px; color:var(--text); }
+    .stat-card .s-sub { font-size:12px; color:var(--success); margin-top:4px; }
+
+    /* ── SECTION CARDS ── */
+    .section-card {
+      background:var(--bg2); border:1px solid var(--border);
+      border-radius:10px; margin-bottom:24px; overflow:hidden;
+    }
+    .section-card-header {
+      padding:18px 22px; border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .section-card-title { font-weight:600; font-size:15px; }
+    .section-card-body { padding:22px; }
+
+    /* ── FORM ELEMENTS ── */
+    label { display:block; font-size:12px; color:var(--muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:.5px; }
+    input[type=text], input[type=url], input[type=number], input[type=password], textarea, select {
+      width:100%; background:var(--bg3); border:1px solid var(--border);
+      color:var(--text); border-radius:8px; padding:11px 14px;
+      font-family:'DM Sans',sans-serif; font-size:14px;
+      outline:none; transition:.2s;
+    }
+    input:focus, textarea:focus, select:focus { border-color:var(--red); }
+    textarea { resize:vertical; min-height:90px; }
+    select option { background:var(--bg3); }
+
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+    .form-group { margin-bottom:16px; }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display:inline-flex; align-items:center; gap:6px;
+      padding:10px 18px; border-radius:8px; border:none;
+      font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600;
+      cursor:pointer; transition:.2s;
+    }
+    .btn-primary { background:var(--red); color:#fff; }
+    .btn-primary:hover { background:var(--red-dark); }
+    .btn-secondary { background:var(--bg3); color:var(--text); border:1px solid var(--border); }
+    .btn-secondary:hover { border-color:rgba(255,255,255,0.2); }
+    .btn-success { background:#1e4a2c; color:var(--success); border:1px solid #2d6e3f; }
+    .btn-success:hover { background:#245735; }
+    .btn-danger { background:#4a1e1e; color:#ff6b6b; border:1px solid #6e2d2d; }
+    .btn-danger:hover { background:#571e1e; }
+    .btn-sm { padding:6px 12px; font-size:12px; }
+    .btn-icon { padding:8px; }
+
+    /* ── TABLE ── */
+    .admin-table { width:100%; border-collapse:collapse; }
+    .admin-table th {
+      text-align:left; padding:12px 14px;
+      font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.5px;
+      border-bottom:1px solid var(--border);
+    }
+    .admin-table td {
+      padding:12px 14px; border-bottom:1px solid rgba(255,255,255,0.04);
+      font-size:14px; vertical-align:middle;
+    }
+    .admin-table tr:hover td { background:rgba(255,255,255,0.02); }
+    .member-avatar {
+      width:36px; height:36px; border-radius:6px;
+      object-fit:cover; background:var(--bg3);
+      display:inline-flex; align-items:center; justify-content:center;
+      font-size:12px; font-weight:700; color:var(--muted);
+      border:1px solid var(--border);
+    }
+    .member-avatar img { width:100%; height:100%; object-fit:cover; border-radius:6px; }
+    .tag-badge {
+      display:inline-block; padding:3px 9px; border-radius:20px;
+      font-size:11px; font-weight:600; background:var(--bg3);
+      border:1px solid var(--border);
+    }
+    .tbl-actions { display:flex; gap:6px; }
+
+    /* ── MODAL ── */
+    .modal-backdrop {
+      position:fixed; inset:0; background:rgba(0,0,0,0.85);
+      display:flex; align-items:center; justify-content:center;
+      z-index:1000; opacity:0; pointer-events:none; transition:.2s;
+    }
+    .modal-backdrop.open { opacity:1; pointer-events:all; }
+    .modal-box {
+      background:var(--bg2); border:1px solid var(--border);
+      border-radius:12px; width:580px; max-width:95vw;
+      max-height:90vh; overflow-y:auto;
+      transform:translateY(20px); transition:.2s;
+    }
+    .modal-backdrop.open .modal-box { transform:translateY(0); }
+    .modal-header {
+      padding:20px 24px; border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      position:sticky; top:0; background:var(--bg2); z-index:1;
+    }
+    .modal-title { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:1.5px; }
+    .modal-close { background:none; border:none; color:var(--muted); font-size:20px; cursor:pointer; padding:4px; }
+    .modal-close:hover { color:var(--text); }
+    .modal-body { padding:24px; }
+    .modal-footer { padding:16px 24px; border-top:1px solid var(--border); display:flex; gap:10px; justify-content:flex-end; }
+
+    /* ── PHOTO UPLOAD ── */
+    .photo-upload-area {
+      border:2px dashed var(--border); border-radius:10px;
+      padding:24px; text-align:center; cursor:pointer;
+      transition:.2s; position:relative;
+    }
+    .photo-upload-area:hover { border-color:var(--red); background:rgba(229,9,20,0.04); }
+    .photo-upload-area input[type=file] {
+      position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%;
+    }
+    .photo-preview {
+      width:80px; height:80px; border-radius:8px; object-fit:cover;
+      margin:0 auto 10px; display:block;
+      border:2px solid var(--border);
+    }
+    .upload-hint { font-size:12px; color:var(--muted); }
+
+    /* ── TOAST ── */
+    #toastContainer { position:fixed; bottom:24px; right:24px; z-index:9999; display:flex; flex-direction:column; gap:8px; }
+    .toast {
+      background:var(--bg2); border:1px solid var(--border);
+      border-radius:8px; padding:12px 18px;
+      font-size:14px; color:var(--text);
+      display:flex; align-items:center; gap:10px;
+      animation:slideIn .3s ease;
+      min-width:240px;
+    }
+    .toast.success { border-color:var(--success); }
+    .toast.error { border-color:#ff6b6b; }
+    @keyframes slideIn { from{transform:translateX(30px);opacity:0} to{transform:translateX(0);opacity:1} }
+
+    /* ── SEARCH BAR ── */
+    .search-bar {
+      position:relative; margin-bottom:20px;
+    }
+    .search-bar input {
+      padding-left:36px;
+    }
+    .search-bar .search-icon {
+      position:absolute; left:12px; top:50%; transform:translateY(-50%);
+      color:var(--muted); font-size:14px; pointer-events:none;
+    }
+
+    /* ── ABOUT EDITOR ── */
+    .info-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+
+    /* ── STRUCTURE EDITOR ── */
+    .struct-item {
+      display:flex; align-items:center; gap:12px;
+      padding:12px 14px; border-radius:8px;
+      background:var(--bg3); border:1px solid var(--border);
+      margin-bottom:8px;
+    }
+    .struct-level-badge {
+      min-width:24px; height:24px; border-radius:4px;
+      background:var(--red); color:#fff;
+      display:flex; align-items:center; justify-content:center;
+      font-size:11px; font-weight:700;
+    }
+    .struct-info { flex:1; }
+    .struct-role { font-size:13px; font-weight:600; }
+    .struct-name { font-size:12px; color:var(--muted); margin-top:2px; }
+
+    /* ── ACHIEVEMENTS ── */
+    .achiev-item {
+      display:flex; align-items:center; gap:14px;
+      padding:12px 14px; border-radius:8px;
+      background:var(--bg3); border:1px solid var(--border);
+      margin-bottom:8px;
+    }
+    .achiev-icon-big { font-size:28px; }
+    .achiev-info { flex:1; }
+
+    /* ── GENERAL SETTINGS ── */
+    .settings-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:768px) {
+      .sidebar { width:60px; overflow:hidden; }
+      .sidebar-logo, .nav-item span, .sidebar-footer .btn-logout span { display:none; }
+      .nav-item { padding:14px; justify-content:center; }
+      .main-content { margin-left:60px; padding:20px 16px; }
+      .stat-grid { grid-template-columns:1fr 1fr; }
+      .form-row { grid-template-columns:1fr; }
+      .settings-grid { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">TIFARA</div>
+    <div class="login-sub">Admin Panel — Netflix Original Series</div>
+    <input type="text" id="loginUser" placeholder="Username" />
+    <input type="password" id="loginPass" placeholder="Password" />
+    <button onclick="doLogin()">MASUK</button>
+    <div class="login-error" id="loginError">Username atau password salah.</div>
+  </div>
+</div>
+
+<!-- ADMIN APP -->
+<div id="adminApp">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      TIFARA
+      <span>ADMIN PANEL</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" onclick="showPage('dashboard')" data-page="dashboard">
+        <span class="icon">📊</span><span>Dashboard</span>
+      </div>
+      <div class="nav-item" onclick="showPage('about')" data-page="about">
+        <span class="icon">📋</span><span>Info Kelas</span>
+      </div>
+      <div class="nav-item" onclick="showPage('members')" data-page="members">
+        <span class="icon">👥</span><span>Anggota</span>
+      </div>
+      <div class="nav-item" onclick="showPage('structure')" data-page="structure">
+        <span class="icon">🏛️</span><span>Struktur</span>
+      </div>
+      <div class="nav-item" onclick="showPage('achievements')" data-page="achievements">
+        <span class="icon">🏆</span><span>Prestasi</span>
+      </div>
+      <div class="nav-item" onclick="showPage('settings')" data-page="settings">
+        <span class="icon">⚙️</span><span>Pengaturan</span>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="btn-logout" onclick="doLogout()">
+        <span>🚪</span><span>Logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <h1 class="page-title">DASH<span>BOARD</span></h1>
+        <button class="btn btn-primary" onclick="exportData()">💾 Export Data</button>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="s-label">Total Anggota</div>
+          <div class="s-val" id="stat-total">0</div>
+          <div class="s-sub">Aktif semua</div>
+        </div>
+        <div class="stat-card">
+          <div class="s-label">Putra</div>
+          <div class="s-val" id="stat-putra">0</div>
+          <div class="s-sub">Laki-laki</div>
+        </div>
+        <div class="stat-card">
+          <div class="s-label">Putri</div>
+          <div class="s-val" id="stat-putri">0</div>
+          <div class="s-sub">Perempuan</div>
+        </div>
+        <div class="stat-card">
+          <div class="s-label">Prestasi</div>
+          <div class="s-val" id="stat-achiev">0</div>
+          <div class="s-sub" style="color:var(--warn)">Tercatat</div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-card-header">
+          <div class="section-card-title">📌 Aksi Cepat</div>
+        </div>
+        <div class="section-card-body" style="display:flex;gap:12px;flex-wrap:wrap;">
+          <button class="btn btn-secondary" onclick="showPage('members');openAddMember()">➕ Tambah Anggota</button>
+          <button class="btn btn-secondary" onclick="showPage('structure');openAddStruct()">➕ Tambah Jabatan</button>
+          <button class="btn btn-secondary" onclick="showPage('achievements');openAddAchiev()">➕ Tambah Prestasi</button>
+          <button class="btn btn-secondary" onclick="showPage('about')">✏️ Edit Info Kelas</button>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-card-header">
+          <div class="section-card-title">📣 Status Website</div>
+        </div>
+        <div class="section-card-body">
+          <div style="display:flex;align-items:center;gap:8px;font-size:14px;">
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--success);display:inline-block;box-shadow:0 0 6px var(--success)"></span>
+            <span>Website aktif & online</span>
+          </div>
+          <div style="margin-top:16px;font-size:13px;color:var(--muted)">
+            Data disimpan secara lokal. Export JSON untuk memperbarui <code style="background:var(--bg3);padding:2px 6px;border-radius:4px;color:var(--text)">server.js</code> di website utama.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INFO KELAS -->
+    <div class="page" id="page-about">
+      <div class="page-header">
+        <h1 class="page-title">INFO <span>KELAS</span></h1>
+        <button class="btn btn-primary" onclick="saveAbout()">💾 Simpan</button>
+      </div>
+
+      <div class="section-card">
+        <div class="section-card-header"><div class="section-card-title">📺 Detail Kelas</div></div>
+        <div class="section-card-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nama Kelas</label>
+              <input type="text" id="ab-name" />
+            </div>
+            <div class="form-group">
+              <label>Tahun</label>
+              <input type="number" id="ab-year" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Genre</label>
+              <input type="text" id="ab-genre" placeholder="Drama, Edu, Comedy" />
+            </div>
+            <div class="form-group">
+              <label>Rating</label>
+              <select id="ab-rating">
+                <option>TV-G</option><option>TV-PG</option><option>TV-14</option><option>TV-MA</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Status</label>
+              <select id="ab-status">
+                <option value="Ongoing">Ongoing</option>
+                <option value="Completed">Completed</option>
+                <option value="Hiatus">Hiatus</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Season</label>
+              <input type="text" id="ab-season" placeholder="1 Season" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Sinopsis</label>
+            <textarea id="ab-desc" rows="4"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Tagline (Hero Section)</label>
+            <textarea id="ab-tagline" rows="3"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-card-header"><div class="section-card-title">📱 Media Sosial</div></div>
+        <div class="section-card-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Instagram URL</label>
+              <input type="url" id="ab-ig" placeholder="https://instagram.com/..." />
+            </div>
+            <div class="form-group">
+              <label>Instagram Handle</label>
+              <input type="text" id="ab-ig-handle" placeholder="@nama_akun" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>TikTok URL</label>
+              <input type="url" id="ab-tt" placeholder="https://tiktok.com/..." />
+            </div>
+            <div class="form-group">
+              <label>TikTok Handle</label>
+              <input type="text" id="ab-tt-handle" placeholder="@nama_akun" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Email Kontak</label>
+              <input type="text" id="ab-email" />
+            </div>
+            <div class="form-group">
+              <label>Lokasi</label>
+              <input type="text" id="ab-location" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-card-header"><div class="section-card-title">🎓 Dosen Wali Kelas</div></div>
+        <div class="section-card-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nama Dosen</label>
+              <input type="text" id="ab-dosen" />
+            </div>
+            <div class="form-group">
+              <label>Gelar</label>
+              <input type="text" id="ab-dosen-gelar" placeholder="S.Kom., M.Kom" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANGGOTA -->
+    <div class="page" id="page-members">
+      <div class="page-header">
+        <h1 class="page-title">ANGG<span>OTA</span></h1>
+        <div style="display:flex;gap:10px;">
+          <select id="filterGender" onchange="renderMembersTable()" style="width:auto;padding:10px 14px;font-size:13px;">
+            <option value="">Semua</option>
+            <option value="Putra">Putra</option>
+            <option value="Putri">Putri</option>
+          </select>
+          <button class="btn btn-primary" onclick="openAddMember()">➕ Tambah</button>
+        </div>
+      </div>
+
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="memberSearch" placeholder="Cari anggota..." oninput="renderMembersTable()" />
+      </div>
+
+      <div class="section-card">
+        <div class="section-card-body" style="padding:0;overflow-x:auto;">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Foto</th>
+                <th>Nama</th>
+                <th>Jabatan</th>
+                <th>Genre</th>
+                <th>Rating</th>
+                <th>Gender</th>
+                <th>Instagram</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="membersTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- STRUKTUR -->
+    <div class="page" id="page-structure">
+      <div class="page-header">
+        <h1 class="page-title">STRUK<span>TUR</span></h1>
+        <button class="btn btn-primary" onclick="openAddStruct()">➕ Tambah Jabatan</button>
+      </div>
+      <div class="section-card">
+        <div class="section-card-body" id="structList"></div>
+      </div>
+    </div>
+
+    <!-- PRESTASI -->
+    <div class="page" id="page-achievements">
+      <div class="page-header">
+        <h1 class="page-title">PRES<span>TASI</span></h1>
+        <button class="btn btn-primary" onclick="openAddAchiev()">➕ Tambah</button>
+      </div>
+      <div id="achievList"></div>
+      <div style="margin-top:20px;font-size:13px;color:var(--muted);padding:16px;background:var(--bg2);border-radius:8px;border:1px solid var(--border);">
+        💡 Prestasi yang ditambahkan akan muncul di section Awards & Prestasi website.
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="page" id="page-settings">
+      <div class="page-header">
+        <h1 class="page-title">PENGA<span>TURAN</span></h1>
+      </div>
+
+      <div class="section-card">
+        <div class="section-card-header"><div class="section-card-title">🔐 Ubah Password Admin</div></div>
+        <div class="section-card-body">
+          <div class="settings-grid">
+            <div>
+              <div class="form-group"><label>Password Lama</label><input type="password" id="oldPass"/></div>
+              <div class="form-group"><label>Password Baru</label><input type="password" id="newPass"/></div>
+              <div class="form-group"><label>Konfirmasi Password</label><input type="password" id="confPass"/></div>
+              <button class="btn btn-primary" onclick="changePassword()">🔒 Simpan Password</button>
+            </div>
+            <div style="font-size:13px;color:var(--muted);line-height:2;padding-top:8px;">
+              <div>Default: <code style="background:var(--bg3);padding:2px 6px;border-radius:4px;color:var(--text)">admin</code> / <code style="background:var(--bg3);padding:2px 6px;border-radius:4px;color:var(--text)">tifara2026</code></div>
+              <div style="margin-top:12px;">Password disimpan di browser (localStorage). Gunakan browser yang sama.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-card-header"><div class="section-card-title">📤 Export & Import Data</div></div>
+        <div class="section-card-body" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;">
+          <div>
+            <button class="btn btn-success" onclick="exportData()">⬇️ Export JSON</button>
+            <div style="font-size:12px;color:var(--muted);margin-top:8px;">Download data untuk backup atau update server.js</div>
+          </div>
+          <div>
+            <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">⬆️ Import JSON</button>
+            <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)"/>
+            <div style="font-size:12px;color:var(--muted);margin-top:8px;">Restore dari file export sebelumnya</div>
+          </div>
+          <div>
+            <button class="btn btn-danger" onclick="resetData()">🗑️ Reset ke Default</button>
+            <div style="font-size:12px;color:var(--muted);margin-top:8px;">Kembalikan semua data ke semula</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- TOAST -->
+<div id="toastContainer"></div>
+
+<!-- MEMBER MODAL -->
+<div class="modal-backdrop" id="memberModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="memberModalTitle">TAMBAH ANGGOTA</div>
+      <button class="modal-close" onclick="closeModal('memberModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="m-id"/>
+      <div style="text-align:center;margin-bottom:20px;">
+        <div class="photo-upload-area" onclick="document.getElementById('m-photo-file').click()">
+          <input type="file" id="m-photo-file" accept="image/*" onchange="previewPhoto(this,'m-photo-preview','m-photo')" style="display:none">
+          <img id="m-photo-preview" class="photo-preview" src="" alt="" style="display:none"/>
+          <div id="m-upload-hint">
+            <div style="font-size:28px;margin-bottom:8px;">📷</div>
+            <div style="font-size:14px;color:var(--text);margin-bottom:4px;">Klik untuk upload foto</div>
+            <div class="upload-hint">PNG, JPG • Max 2MB</div>
+          </div>
+        </div>
+        <input type="hidden" id="m-photo"/>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nama Lengkap *</label>
+          <input type="text" id="m-name" placeholder="Nama anggota"/>
+        </div>
+        <div class="form-group">
+          <label>Jabatan / Role</label>
+          <input type="text" id="m-role" placeholder="Anggota Aktif / Ketua..."/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Genre Tag</label>
+          <select id="m-tag">
+            <option>Drama</option><option>Action</option><option>Comedy</option>
+            <option>Romance</option><option>Tech</option><option>Sci-Fi</option>
+            <option>Thriller</option><option>Mystery</option><option>Spiritual</option><option>Leadership</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Rating</label>
+          <input type="text" id="m-rating" placeholder="99%"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Gender</label>
+          <select id="m-gender">
+            <option value="Putra">Putra</option>
+            <option value="Putri">Putri</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Instagram URL</label>
+          <input type="url" id="m-ig" placeholder="https://instagram.com/..."/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Path Foto (opsional, jika tidak upload)</label>
+        <input type="text" id="m-photo-path" placeholder="assets/img/nama.png"/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('memberModal')">Batal</button>
+      <button class="btn btn-primary" onclick="saveMember()">💾 Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- STRUCT MODAL -->
+<div class="modal-backdrop" id="structModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="structModalTitle">TAMBAH JABATAN</div>
+      <button class="modal-close" onclick="closeModal('structModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="s-idx"/>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Jabatan / Role *</label>
+          <input type="text" id="s-role" placeholder="Ketua Kelas"/>
+        </div>
+        <div class="form-group">
+          <label>Nama *</label>
+          <input type="text" id="s-name" placeholder="Nama pemegang jabatan"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Level Hierarki</label>
+          <select id="s-level">
+            <option value="0">0 — Wali Kelas</option>
+            <option value="1">1 — Ketua / Wakil</option>
+            <option value="2">2 — Sekretaris / Bendahara</option>
+            <option value="3">3 — PJ / Koordinator</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Emoji Icon</label>
+          <input type="text" id="s-icon" placeholder="👑" maxlength="4"/>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('structModal')">Batal</button>
+      <button class="btn btn-primary" onclick="saveStruct()">💾 Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ACHIEVEMENT MODAL -->
+<div class="modal-backdrop" id="achievModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="achievModalTitle">TAMBAH PRESTASI</div>
+      <button class="modal-close" onclick="closeModal('achievModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="a-idx"/>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Judul *</label>
+          <input type="text" id="a-title" placeholder="JUARA 1"/>
+        </div>
+        <div class="form-group">
+          <label>Tahun</label>
+          <input type="number" id="a-year" placeholder="2026"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nama Event *</label>
+          <input type="text" id="a-event" placeholder="Nama lomba/kompetisi"/>
+        </div>
+        <div class="form-group">
+          <label>Kategori</label>
+          <input type="text" id="a-cat" placeholder="Best Performance"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Emoji Icon</label>
+        <input type="text" id="a-icon" placeholder="🏆" maxlength="4"/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('achievModal')">Batal</button>
+      <button class="btn btn-primary" onclick="saveAchiev()">💾 Simpan</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════
+   DEFAULT DATA
+══════════════════════════════════ */
+const DEFAULT_MEMBERS = [
+  { id:1,  name:"Abdurrahman",            role:"Anggota Aktif",                tag:"Drama",      rating:"99%", photo:"assets/img/abdurahman.png",    ig:"https://instagram.com/abdull_rhman07",     gender:"Putra" },
+  { id:2,  name:"Aditya Hartono",         role:"Anggota Aktif",                tag:"Sci-Fi",     rating:"99%", photo:"assets/img/aditya.png",        ig:"https://instagram.com/tifara_untara25",    gender:"Putra" },
+  { id:3,  name:"Ahmad Fadhlan Amin",     role:"PJ Algoritma & Struktur Data", tag:"Tech",       rating:"99%", photo:"assets/img/fadhlan.png",       ig:"https://instagram.com/dadidudedenn",       gender:"Putra" },
+  { id:4,  name:"Alya Rosiana Rahayu",    role:"Anggota Aktif",                tag:"Romance",    rating:"99%", photo:"assets/img/alya.png",          ig:"https://instagram.com/alyarosianarahayu",  gender:"Putri" },
+  { id:5,  name:"Anaz Urbanangta",        role:"Anggota Aktif",                tag:"Sci-Fi",     rating:"99%", photo:"assets/img/anaz.png",          ig:"https://instagram.com/nazavta",            gender:"Putra" },
+  { id:6,  name:"Arvenal",                role:"Anggota Aktif",                tag:"Action",     rating:"99%", photo:"assets/img/arvenal.png",       ig:"https://instagram.com/arvenall_",          gender:"Putra" },
+  { id:7,  name:"Attha Mauluna I. P.",    role:"Bendahara",                    tag:"Thriller",   rating:"99%", photo:"assets/img/luna.png",          ig:"https://instagram.com/lunathaa_",          gender:"Putri" },
+  { id:8,  name:"Aulia Nur Ramadhani",    role:"Anggota Aktif",                tag:"Romance",    rating:"99%", photo:"assets/img/aulia.png",         ig:"https://instagram.com/tifara_untara25",    gender:"Putri" },
+  { id:9,  name:"Chandra Elisa",          role:"Anggota Aktif",                tag:"Drama",      rating:"99%", photo:"assets/img/chandra.png",       ig:"https://instagram.com/c.alsyaaa",          gender:"Putra" },
+  { id:10, name:"Dede Juliansyah",        role:"PJ Komputasi Numerik",         tag:"Sci-Fi",     rating:"99%", photo:"assets/img/dejul.png",         ig:"https://instagram.com/jlynsyh_69",         gender:"Putra" },
+  { id:11, name:"Dhava Adiyuda P.",       role:"Anggota Aktif",                tag:"Action",     rating:"99%", photo:"assets/img/dhava.png",         ig:"https://instagram.com/bro_sanstay",        gender:"Putra" },
+  { id:12, name:"Dimas Eka Saputra",      role:"Anggota Aktif",                tag:"Drama",      rating:"99%", photo:"assets/img/dimas-eka.png",     ig:"https://instagram.com/dmszka",             gender:"Putra" },
+  { id:13, name:"Dimas Maulaya S.",       role:"PJ Kalkulus",                  tag:"Mystery",    rating:"99%", photo:"assets/img/dimas-maulaya.png", ig:"https://instagram.com/salvatoris_19",      gender:"Putra" },
+  { id:14, name:"Dini Fitriani",          role:"Anggota Aktif",                tag:"Romance",    rating:"99%", photo:"assets/img/dini.png",          ig:"https://instagram.com/diniftaa",           gender:"Putri" },
+  { id:15, name:"Dio Adha",               role:"Anggota Aktif",                tag:"Action",     rating:"99%", photo:"assets/img/dio.png",           ig:"https://instagram.com/dyoo_dha",           gender:"Putra" },
+  { id:16, name:"Elis Amelia Contesa",    role:"Anggota Aktif",                tag:"Drama",      rating:"99%", photo:"assets/img/elis.png",          ig:"https://instagram.com/e.lisstsa_",         gender:"Putri" },
+  { id:17, name:"Fadly Irfansyah M.",     role:"Anggota Aktif",                tag:"Sci-Fi",     rating:"99%", photo:"assets/img/ipan.png",          ig:"https://instagram.com/fannnta_",           gender:"Putra" },
+  { id:18, name:"Fahmi Rizqy F.",         role:"Anggota Aktif",                tag:"Action",     rating:"99%", photo:"assets/img/fahmi.png",         ig:"https://instagram.com/f4hm1_kal",          gender:"Putra" },
+  { id:19, name:"Fathahillah Zakky",      role:"Anggota Aktif",                tag:"Mystery",    rating:"99%", photo:"assets/img/user.png",          ig:"https://instagram.com/fathahillahzakky",   gender:"Putra" },
+  { id:20, name:"Firsyha",                role:"PJ Pancasila",                 tag:"Drama",      rating:"99%", photo:"assets/img/ica.png",           ig:"https://instagram.com/_frsyha",            gender:"Putri" },
+  { id:21, name:"Intan Aulia M.",         role:"Sekretaris",                   tag:"Drama",      rating:"99%", photo:"assets/img/intan.png",         ig:"https://instagram.com/aulinaaf",           gender:"Putri" },
+  { id:22, name:"Keisya Cintya Putri",    role:"Wakil Ketua",                  tag:"Action",     rating:"99%", photo:"assets/img/keisya.png",        ig:"https://instagram.com/ksyctyptri",         gender:"Putri" },
+  { id:23, name:"Lia Noviana",            role:"PJ Sistem Digital",            tag:"Tech",       rating:"99%", photo:"assets/img/lia.png",           ig:"https://instagram.com/vy_livianaaa",       gender:"Putri" },
+  { id:24, name:"Rian Permana",           role:"Anggota Aktif",                tag:"Action",     rating:"99%", photo:"assets/img/rian.png",          ig:"https://instagram.com/rian_ppermana",      gender:"Putra" },
+  { id:25, name:"Muhamad Bilal Islami",   role:"Anggota Aktif",                tag:"Thriller",   rating:"99%", photo:"assets/img/bilal.png",         ig:"https://instagram.com/mbilalislami",       gender:"Putra" },
+  { id:26, name:"Wahyu Putra Raihan",     role:"PJ Etika Profesi",             tag:"Mystery",    rating:"99%", photo:"assets/img/wahyu.png",         ig:"https://instagram.com/wprr.23",            gender:"Putra" },
+  { id:27, name:"M. Nurul Furqon",        role:"Anggota Aktif",                tag:"Spiritual",  rating:"99%", photo:"assets/img/furqon.png",        ig:"https://instagram.com/nurrr.q_",           gender:"Putra" },
+  { id:28, name:"Naufal Syauqi",          role:"PJ Matematika Diskrit",        tag:"Mystery",    rating:"99%", photo:"assets/img/nopal.png",         ig:"https://instagram.com/naufal_n.s",         gender:"Putra" },
+  { id:29, name:"Nurul Diva Adhaeni",     role:"Anggota Aktif",                tag:"Romance",    rating:"99%", photo:"assets/img/nurul.jpg",         ig:"https://instagram.com/_dipaw__",           gender:"Putri" },
+  { id:30, name:"Rangga Bachrunisman",    role:"Anggota Aktif",                tag:"Action",     rating:"99%", photo:"assets/img/rangga.png",        ig:"https://instagram.com/r2.003_",            gender:"Putra" },
+  { id:31, name:"Saefullah",              role:"Anggota Aktif",                tag:"Comedy",     rating:"99%", photo:"assets/img/ipul.png",          ig:"https://instagram.com/mhmdsaefllah",       gender:"Putra" },
+  { id:32, name:"Samuel",                 role:"Ketua Kelas",                  tag:"Action",     rating:"99%", photo:"assets/img/samuel.png",        ig:"https://instagram.com/smlsmjtk",           gender:"Putra" },
+  { id:33, name:"Zahra Hikayatul Aulia",  role:"PJ English for Engineering",   tag:"Romance",    rating:"99%", photo:"assets/img/zahra.png",         ig:"https://instagram.com/zhrhkytl_",          gender:"Putri" },
+];
+
+const DEFAULT_STRUCTURE = [
+  { role:"Wali Kelas",                     name:"Kevin Septianzah, S.Kom., M.Kom", level:0, icon:"👨‍🏫" },
+  { role:"Ketua Kelas",                    name:"Samuel",                          level:1, icon:"👑" },
+  { role:"Wakil Ketua",                    name:"Keisya Cintya Putri",             level:1, icon:"⭐" },
+  { role:"Sekretaris",                     name:"Intan Aulia M.",                  level:2, icon:"📝" },
+  { role:"Bendahara",                      name:"Attha Mauluna Isnainy Putrie",    level:2, icon:"💰" },
+  { role:"PJ Pancasila",                   name:"Firsyha",                         level:3, icon:"🏛️" },
+  { role:"PJ Komputasi Numerik",           name:"Dede Juliansyah",                 level:3, icon:"🧮" },
+  { role:"PJ English for Enginering",      name:"Zahra Hikayatul Aulia",           level:3, icon:"🗣️" },
+  { role:"PJ Algoritma dan Struktur Data", name:"Ahmad Fadhlan Amin",              level:3, icon:"💻" },
+  { role:"PJ Sistem Digital",              name:"Lia Noviana",                     level:3, icon:"🔌" },
+  { role:"PJ Etika Profesi",               name:"Wahyu Putra Raihan",              level:3, icon:"⚖️" },
+  { role:"PJ Matematika Diskrit",          name:"Naufal Syauqi",                   level:3, icon:"📊" },
+  { role:"PJ Kalkulus",                    name:"Dimas Maulaya S.",                level:3, icon:"📈" },
+];
+
+const DEFAULT_ABOUT = {
+  name:"TIFARA", year:2026, genre:"Drama, Edu, Comedy", rating:"TV-G",
+  status:"Ongoing", season:"1 Season",
+  desc:"Sebuah kisah nyata tentang 33 mahasiswa yang bersatu dalam satu kelas bernama TIFARA. Penuh dengan dinamika pertemanan, perjuangan akademik, dan momen-momen yang akan dikenang selamanya. Di sini, setiap hari adalah episode baru yang penuh kejutan.",
+  tagline:"Kisah 33 mahasiswa luar biasa yang berjuang, bertumbuh, dan menciptakan kenangan tak terlupakan bersama. Sebuah series tentang persahabatan, prestasi, dan petualangan kampus yang nyata.",
+  ig:"https://www.instagram.com/tifara_untara25", igHandle:"@tifara_untara25",
+  tt:"https://www.tiktok.com/@tifara_untara",     ttHandle:"@tifara_untara",
+  email:"ahmadfadhlan2307@gmail.com", location:"Kab. Tangerang, Solear",
+  dosen:"Kevin Septianzah", dosenGelar:"S.Kom., M.Kom"
+};
+
+/* ══════════════════════════════════
+   STATE
+══════════════════════════════════ */
+let MEMBERS, STRUCTURE, ACHIEVEMENTS, ABOUT;
+
+function loadData() {
+  MEMBERS      = JSON.parse(localStorage.getItem('tf_members'))      || JSON.parse(JSON.stringify(DEFAULT_MEMBERS));
+  STRUCTURE    = JSON.parse(localStorage.getItem('tf_structure'))    || JSON.parse(JSON.stringify(DEFAULT_STRUCTURE));
+  ACHIEVEMENTS = JSON.parse(localStorage.getItem('tf_achievements')) || [];
+  ABOUT        = JSON.parse(localStorage.getItem('tf_about'))        || JSON.parse(JSON.stringify(DEFAULT_ABOUT));
+}
+function saveAll() {
+  localStorage.setItem('tf_members',      JSON.stringify(MEMBERS));
+  localStorage.setItem('tf_structure',    JSON.stringify(STRUCTURE));
+  localStorage.setItem('tf_achievements', JSON.stringify(ACHIEVEMENTS));
+  localStorage.setItem('tf_about',        JSON.stringify(ABOUT));
+}
+
+/* ══════════════════════════════════
+   AUTH
+══════════════════════════════════ */
+function getCredentials() {
+  return {
+    user: localStorage.getItem('tf_admin_user') || 'admin',
+    pass: localStorage.getItem('tf_admin_pass') || 'tifara2026'
+  };
+}
+function doLogin() {
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value.trim();
+  const c = getCredentials();
+  if (u === c.user && p === c.pass) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminApp').style.display = 'block';
+    init();
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+  }
+}
+document.getElementById('loginPass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+function doLogout() {
+  document.getElementById('adminApp').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value = '';
+}
+
+function changePassword() {
+  const o = document.getElementById('oldPass').value;
+  const n = document.getElementById('newPass').value;
+  const c = document.getElementById('confPass').value;
+  const creds = getCredentials();
+  if (o !== creds.pass) return toast('Password lama salah!','error');
+  if (n.length < 4)     return toast('Password baru min. 4 karakter','error');
+  if (n !== c)          return toast('Konfirmasi password tidak cocok','error');
+  localStorage.setItem('tf_admin_pass', n);
+  toast('Password berhasil diubah! ✅','success');
+  ['oldPass','newPass','confPass'].forEach(id => document.getElementById(id).value='');
+}
+
+/* ══════════════════════════════════
+   NAVIGATION
+══════════════════════════════════ */
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelector(`.nav-item[data-page="${name}"]`).classList.add('active');
+  if (name==='dashboard')   renderDashboard();
+  if (name==='members')     renderMembersTable();
+  if (name==='structure')   renderStructure();
+  if (name==='achievements')renderAchievements();
+  if (name==='about')       loadAboutForm();
+}
+
+/* ══════════════════════════════════
+   DASHBOARD
+══════════════════════════════════ */
+function renderDashboard() {
+  const putra = MEMBERS.filter(m => m.gender==='Putra').length;
+  const putri = MEMBERS.filter(m => m.gender==='Putri').length;
+  document.getElementById('stat-total').textContent = MEMBERS.length;
+  document.getElementById('stat-putra').textContent = putra;
+  document.getElementById('stat-putri').textContent = putri;
+  document.getElementById('stat-achiev').textContent = ACHIEVEMENTS.length;
+}
+
+/* ══════════════════════════════════
+   ABOUT
+══════════════════════════════════ */
+function loadAboutForm() {
+  const a = ABOUT;
+  document.getElementById('ab-name').value     = a.name||'';
+  document.getElementById('ab-year').value     = a.year||'';
+  document.getElementById('ab-genre').value    = a.genre||'';
+  document.getElementById('ab-rating').value   = a.rating||'TV-G';
+  document.getElementById('ab-status').value   = a.status||'Ongoing';
+  document.getElementById('ab-season').value   = a.season||'';
+  document.getElementById('ab-desc').value     = a.desc||'';
+  document.getElementById('ab-tagline').value  = a.tagline||'';
+  document.getElementById('ab-ig').value       = a.ig||'';
+  document.getElementById('ab-ig-handle').value= a.igHandle||'';
+  document.getElementById('ab-tt').value       = a.tt||'';
+  document.getElementById('ab-tt-handle').value= a.ttHandle||'';
+  document.getElementById('ab-email').value    = a.email||'';
+  document.getElementById('ab-location').value = a.location||'';
+  document.getElementById('ab-dosen').value    = a.dosen||'';
+  document.getElementById('ab-dosen-gelar').value = a.dosenGelar||'';
+}
+
+function saveAbout() {
+  ABOUT = {
+    name:     document.getElementById('ab-name').value,
+    year:     document.getElementById('ab-year').value,
+    genre:    document.getElementById('ab-genre').value,
+    rating:   document.getElementById('ab-rating').value,
+    status:   document.getElementById('ab-status').value,
+    season:   document.getElementById('ab-season').value,
+    desc:     document.getElementById('ab-desc').value,
+    tagline:  document.getElementById('ab-tagline').value,
+    ig:       document.getElementById('ab-ig').value,
+    igHandle: document.getElementById('ab-ig-handle').value,
+    tt:       document.getElementById('ab-tt').value,
+    ttHandle: document.getElementById('ab-tt-handle').value,
+    email:    document.getElementById('ab-email').value,
+    location: document.getElementById('ab-location').value,
+    dosen:    document.getElementById('ab-dosen').value,
+    dosenGelar: document.getElementById('ab-dosen-gelar').value,
+  };
+  saveAll();
+  toast('Info kelas berhasil disimpan! ✅','success');
+}
+
+/* ══════════════════════════════════
+   MEMBERS TABLE
+══════════════════════════════════ */
+function renderMembersTable() {
+  const q  = (document.getElementById('memberSearch').value||'').toLowerCase();
+  const gf = document.getElementById('filterGender').value;
+  const tbody = document.getElementById('membersTbody');
+  tbody.innerHTML = '';
+
+  const filtered = MEMBERS.filter(m => {
+    const matchQ = !q || m.name.toLowerCase().includes(q) || m.role.toLowerCase().includes(q);
+    const matchG = !gf || m.gender===gf;
+    return matchQ && matchG;
+  });
+
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:32px">Tidak ada data</td></tr>`;
+    return;
+  }
+
+  filtered.forEach((m,i) => {
+    const tr = document.createElement('tr');
+    const igHandle = m.ig ? '@'+m.ig.replace(/.*instagram\.com\//,'').replace(/\//,'') : '-';
+    tr.innerHTML = `
+      <td style="color:var(--muted)">${i+1}</td>
+      <td>
+        <div class="member-avatar" style="${m.photo?'':'background:linear-gradient(135deg,#1a0000,#8b0000)'}">
+          ${m.photo?`<img src="${m.photo}" alt="${m.name}" onerror="this.style.display='none';this.parentElement.textContent='${initials(m.name)}'">`
+                   :`${initials(m.name)}`}
+        </div>
+      </td>
+      <td><strong>${m.name}</strong></td>
+      <td style="color:var(--muted);font-size:13px">${m.role}</td>
+      <td><span class="tag-badge">${m.tag}</span></td>
+      <td style="color:var(--success)">${m.rating}</td>
+      <td><span style="font-size:12px;color:${m.gender==='Putri'?'#e91e8c':'#4fc3f7'}">${m.gender||'-'}</span></td>
+      <td><a href="${m.ig}" target="_blank" style="color:var(--red);font-size:12px;text-decoration:none">${igHandle}</a></td>
+      <td>
+        <div class="tbl-actions">
+          <button class="btn btn-secondary btn-sm" onclick="editMember(${m.id})">✏️</button>
+          <button class="btn btn-danger btn-sm"    onclick="deleteMember(${m.id})">🗑️</button>
+        </div>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function initials(n) { return (n||'').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase(); }
+
+/* ── ADD / EDIT MEMBER ── */
+let _editMemberId = null;
+function openAddMember() {
+  _editMemberId = null;
+  document.getElementById('memberModalTitle').textContent = 'TAMBAH ANGGOTA';
+  clearMemberForm();
+  openModal('memberModal');
+}
+function editMember(id) {
+  const m = MEMBERS.find(x=>x.id===id);
+  if (!m) return;
+  _editMemberId = id;
+  document.getElementById('memberModalTitle').textContent = 'EDIT ANGGOTA';
+  document.getElementById('m-id').value       = m.id;
+  document.getElementById('m-name').value     = m.name;
+  document.getElementById('m-role').value     = m.role;
+  document.getElementById('m-tag').value      = m.tag;
+  document.getElementById('m-rating').value   = m.rating;
+  document.getElementById('m-gender').value   = m.gender||'Putra';
+  document.getElementById('m-ig').value       = m.ig;
+  document.getElementById('m-photo').value    = m.photo;
+  document.getElementById('m-photo-path').value = m.photo;
+  const prev = document.getElementById('m-photo-preview');
+  const hint = document.getElementById('m-upload-hint');
+  if (m.photo) { prev.src=m.photo; prev.style.display='block'; hint.style.display='none'; }
+  else         { prev.style.display='none'; hint.style.display='block'; }
+  openModal('memberModal');
+}
+function clearMemberForm() {
+  ['m-id','m-name','m-role','m-rating','m-ig','m-photo','m-photo-path'].forEach(id=>{
+    document.getElementById(id).value='';
+  });
+  document.getElementById('m-tag').value='Drama';
+  document.getElementById('m-gender').value='Putra';
+  document.getElementById('m-photo-preview').style.display='none';
+  document.getElementById('m-upload-hint').style.display='block';
+}
+function saveMember() {
+  const name = document.getElementById('m-name').value.trim();
+  if (!name) return toast('Nama tidak boleh kosong','error');
+  const photoVal = document.getElementById('m-photo').value || document.getElementById('m-photo-path').value;
+  const member = {
+    id:     _editMemberId || (Math.max(0,...MEMBERS.map(x=>x.id))+1),
+    name,
+    role:   document.getElementById('m-role').value.trim() || 'Anggota Aktif',
+    tag:    document.getElementById('m-tag').value,
+    rating: document.getElementById('m-rating').value.trim() || '99%',
+    gender: document.getElementById('m-gender').value,
+    ig:     document.getElementById('m-ig').value.trim(),
+    photo:  photoVal,
+  };
+  if (_editMemberId) {
+    const idx = MEMBERS.findIndex(x=>x.id===_editMemberId);
+    MEMBERS[idx] = member;
+    toast(`${name} berhasil diupdate! ✅`,'success');
+  } else {
+    MEMBERS.push(member);
+    toast(`${name} berhasil ditambahkan! ✅`,'success');
+  }
+  saveAll();
+  closeModal('memberModal');
+  renderMembersTable();
+  renderDashboard();
+}
+function deleteMember(id) {
+  const m = MEMBERS.find(x=>x.id===id);
+  if (!m) return;
+  if (!confirm(`Hapus ${m.name}?`)) return;
+  MEMBERS = MEMBERS.filter(x=>x.id!==id);
+  saveAll();
+  renderMembersTable();
+  renderDashboard();
+  toast(`${m.name} dihapus`,'success');
+}
+
+/* ── PHOTO UPLOAD ── */
+function previewPhoto(input, previewId, hiddenId) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById(previewId).src = e.target.result;
+    document.getElementById(previewId).style.display = 'block';
+    document.getElementById('m-upload-hint').style.display = 'none';
+    document.getElementById(hiddenId).value = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+/* ══════════════════════════════════
+   STRUCTURE
+══════════════════════════════════ */
+function renderStructure() {
+  const list = document.getElementById('structList');
+  list.innerHTML = '';
+  STRUCTURE.forEach((s,i) => {
+    const div = document.createElement('div');
+    div.className = 'struct-item';
+    div.innerHTML = `
+      <div class="struct-level-badge">${s.level}</div>
+      <div style="font-size:22px">${s.icon}</div>
+      <div class="struct-info">
+        <div class="struct-role">${s.role}</div>
+        <div class="struct-name">${s.name}</div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-secondary btn-sm" onclick="editStruct(${i})">✏️</button>
+        <button class="btn btn-danger btn-sm"    onclick="deleteStruct(${i})">🗑️</button>
+      </div>`;
+    list.appendChild(div);
+  });
+}
+
+let _editStructIdx = null;
+function openAddStruct() {
+  _editStructIdx = null;
+  document.getElementById('structModalTitle').textContent='TAMBAH JABATAN';
+  ['s-role','s-name','s-icon'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('s-level').value='3';
+  openModal('structModal');
+}
+function editStruct(idx) {
+  _editStructIdx = idx;
+  const s = STRUCTURE[idx];
+  document.getElementById('structModalTitle').textContent='EDIT JABATAN';
+  document.getElementById('s-role').value  = s.role;
+  document.getElementById('s-name').value  = s.name;
+  document.getElementById('s-level').value = s.level;
+  document.getElementById('s-icon').value  = s.icon;
+  openModal('structModal');
+}
+function saveStruct() {
+  const role = document.getElementById('s-role').value.trim();
+  const name = document.getElementById('s-name').value.trim();
+  if (!role||!name) return toast('Role dan nama wajib diisi','error');
+  const item = {
+    role, name,
+    level: parseInt(document.getElementById('s-level').value),
+    icon:  document.getElementById('s-icon').value.trim() || '⭐',
+  };
+  if (_editStructIdx !== null) {
+    STRUCTURE[_editStructIdx] = item;
+    toast('Jabatan diupdate ✅','success');
+  } else {
+    STRUCTURE.push(item);
+    toast('Jabatan ditambahkan ✅','success');
+  }
+  saveAll();
+  closeModal('structModal');
+  renderStructure();
+}
+function deleteStruct(idx) {
+  if (!confirm(`Hapus jabatan "${STRUCTURE[idx].role}"?`)) return;
+  STRUCTURE.splice(idx,1);
+  saveAll();
+  renderStructure();
+  toast('Jabatan dihapus','success');
+}
+
+/* ══════════════════════════════════
+   ACHIEVEMENTS
+══════════════════════════════════ */
+function renderAchievements() {
+  const list = document.getElementById('achievList');
+  list.innerHTML = '';
+  if (!ACHIEVEMENTS.length) {
+    list.innerHTML = `<div style="text-align:center;padding:48px;color:var(--muted);background:var(--bg2);border-radius:10px;border:1px solid var(--border)">
+      <div style="font-size:48px;margin-bottom:12px">🏆</div>
+      <div>Belum ada prestasi. Tambahkan yang pertama!</div>
+    </div>`;
+    return;
+  }
+  ACHIEVEMENTS.forEach((a,i) => {
+    const div = document.createElement('div');
+    div.className = 'achiev-item';
+    div.innerHTML = `
+      <div class="achiev-icon-big">${a.icon}</div>
+      <div class="achiev-info">
+        <div style="font-weight:700">${a.title}</div>
+        <div style="font-size:13px;color:var(--muted)">${a.event} • ${a.category} • ${a.year}</div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-secondary btn-sm" onclick="editAchiev(${i})">✏️</button>
+        <button class="btn btn-danger btn-sm"    onclick="deleteAchiev(${i})">🗑️</button>
+      </div>`;
+    list.appendChild(div);
+  });
+}
+
+let _editAchievIdx = null;
+function openAddAchiev() {
+  _editAchievIdx = null;
+  document.getElementById('achievModalTitle').textContent='TAMBAH PRESTASI';
+  ['a-title','a-event','a-cat'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('a-year').value = new Date().getFullYear();
+  document.getElementById('a-icon').value = '🏆';
+  openModal('achievModal');
+}
+function editAchiev(idx) {
+  _editAchievIdx = idx;
+  const a = ACHIEVEMENTS[idx];
+  document.getElementById('achievModalTitle').textContent='EDIT PRESTASI';
+  document.getElementById('a-title').value = a.title;
+  document.getElementById('a-year').value  = a.year;
+  document.getElementById('a-event').value = a.event;
+  document.getElementById('a-cat').value   = a.category;
+  document.getElementById('a-icon').value  = a.icon;
+  openModal('achievModal');
+}
+function saveAchiev() {
+  const title = document.getElementById('a-title').value.trim();
+  const event = document.getElementById('a-event').value.trim();
+  if (!title||!event) return toast('Judul dan event wajib diisi','error');
+  const item = {
+    title, event,
+    year:     document.getElementById('a-year').value,
+    category: document.getElementById('a-cat').value.trim(),
+    icon:     document.getElementById('a-icon').value.trim()||'🏆',
+  };
+  if (_editAchievIdx !== null) {
+    ACHIEVEMENTS[_editAchievIdx] = item;
+    toast('Prestasi diupdate ✅','success');
+  } else {
+    ACHIEVEMENTS.push(item);
+    toast('Prestasi ditambahkan ✅','success');
+  }
+  saveAll();
+  closeModal('achievModal');
+  renderAchievements();
+  renderDashboard();
+}
+function deleteAchiev(idx) {
+  if (!confirm(`Hapus prestasi "${ACHIEVEMENTS[idx].title}"?`)) return;
+  ACHIEVEMENTS.splice(idx,1);
+  saveAll();
+  renderAchievements();
+  renderDashboard();
+  toast('Prestasi dihapus','success');
+}
+
+/* ══════════════════════════════════
+   EXPORT / IMPORT
+══════════════════════════════════ */
+function exportData() {
+  const data = { MEMBERS, STRUCTURE, ACHIEVEMENTS, ABOUT };
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'tifara-data.json';
+  a.click();
+  toast('Data berhasil diexport! ✅','success');
+}
+
+function importData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const d = JSON.parse(ev.target.result);
+      if (d.MEMBERS)      MEMBERS      = d.MEMBERS;
+      if (d.STRUCTURE)    STRUCTURE    = d.STRUCTURE;
+      if (d.ACHIEVEMENTS) ACHIEVEMENTS = d.ACHIEVEMENTS;
+      if (d.ABOUT)        ABOUT        = d.ABOUT;
+      saveAll();
+      showPage('dashboard');
+      toast('Data berhasil diimport! ✅','success');
+    } catch(err) {
+      toast('File JSON tidak valid','error');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value='';
+}
+
+function resetData() {
+  if (!confirm('Reset semua data ke default? Ini tidak bisa dibatalkan!')) return;
+  MEMBERS      = JSON.parse(JSON.stringify(DEFAULT_MEMBERS));
+  STRUCTURE    = JSON.parse(JSON.stringify(DEFAULT_STRUCTURE));
+  ACHIEVEMENTS = [];
+  ABOUT        = JSON.parse(JSON.stringify(DEFAULT_ABOUT));
+  saveAll();
+  showPage('dashboard');
+  toast('Data direset ke default ✅','success');
+}
+
+/* ══════════════════════════════════
+   MODAL HELPERS
+══════════════════════════════════ */
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-backdrop').forEach(m => {
+  m.addEventListener('click', e => { if(e.target===m) m.classList.remove('open'); });
+});
+
+/* ══════════════════════════════════
+   TOAST
+══════════════════════════════════ */
+function toast(msg, type='success') {
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<span>${type==='success'?'✅':'❌'}</span> ${msg}`;
+  document.getElementById('toastContainer').appendChild(t);
+  setTimeout(()=>t.remove(), 3500);
+}
+
+/* ══════════════════════════════════
+   INIT
+══════════════════════════════════ */
+function init() {
+  loadData();
+  renderDashboard();
+}
+</script>
+</body>
+</html>

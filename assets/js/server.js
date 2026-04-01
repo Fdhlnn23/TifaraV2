@@ -1,54 +1,83 @@
 /* ═══════════════════════════════════════════════════
+   ADMIN DATA LOADER
+   Data bisa diupdate lewat admin.html — disimpan di localStorage
+═══════════════════════════════════════════════════ */
+function loadAdminData() {
+  try {
+    const m = localStorage.getItem('tf_members');
+    const s = localStorage.getItem('tf_structure');
+    const a = localStorage.getItem('tf_achievements');
+    const ab = localStorage.getItem('tf_about');
+    if (m) { const d=JSON.parse(m); MEMBERS.length=0; d.forEach(x=>MEMBERS.push(x)); }
+    if (s) { const d=JSON.parse(s); STRUCTURE.length=0; d.forEach(x=>STRUCTURE.push(x)); }
+    if (a) { const d=JSON.parse(a); ACHIEVEMENTS.length=0; d.forEach(x=>ACHIEVEMENTS.push(x)); }
+    if (ab) {
+      const d = JSON.parse(ab);
+      // Update about section UI with admin data
+      const els = {
+        '.about-h3':      d.name+': NEVER DIE',
+        '.about-desc':    d.desc,
+        '.detail-val:nth-child(2)': d.genre,
+      };
+      // Apply after DOM ready — handled in initAdminData()
+      window._adminAbout = d;
+    }
+  } catch(e) { console.log('No admin data, using default'); }
+}
+
+/* ═══════════════════════════════════════════════════
    DATA
 ═══════════════════════════════════════════════════ */
 const MEMBERS = [
-  { id:1,  name:"Abdurrahman",            role:"Anggota Aktif",          tag:"Drama",      rating:"99%", photo:"assets/img/abdurahman.png",    ig:"https://instagram.com/tifara_untara25" },
-  { id:2,  name:"Aditya Hartono",         role:"PJ Dasar Pemrograman",   tag:"Tech",       rating:"99%", photo:"assets/img/aditya.png",        ig:"https://instagram.com/tifara_untara25" },
-  { id:3,  name:"Ahmad Fadhlan Amin",     role:"Anggota Aktif",          tag:"Comedy",     rating:"99%", photo:"assets/img/fadhlan.png",       ig:"https://instagram.com/dadidudedenn" },
-  { id:4,  name:"Alya Rosiana Rahayu",    role:"PJ Teknologi Platform",  tag:"Tech",       rating:"99%", photo:"assets/img/alya.png",          ig:"https://instagram.com/tifara_untara25" },
-  { id:5,  name:"Anaz Urbanangta",        role:"PJ Fisika Dasar",        tag:"Sci-Fi",     rating:"99%", photo:"assets/img/anaz.png",          ig:"https://instagram.com/tifara_untara25" },
-  { id:6,  name:"Arvenal",                role:"Anggota Aktif",          tag:"Action",     rating:"99%", photo:"assets/img/arvenal.png",       ig:"https://instagram.com/tifara_untara25" },
-  { id:7,  name:"Attha Mauluna I. P.",    role:"Bendahara",              tag:"Thriller",   rating:"99%", photo:"assets/img/luna.png",          ig:"https://instagram.com/tifara_untara25" },
-  { id:8,  name:"Aulia Nur Ramadhani",    role:"Anggota Aktif",          tag:"Romance",    rating:"99%", photo:"assets/img/aulia.png",         ig:"https://instagram.com/tifara_untara25" },
-  { id:9,  name:"Chandra Elisa",          role:"PJ Bahasa Indonesia",    tag:"Drama",      rating:"99%", photo:"assets/img/chandra.png",       ig:"https://instagram.com/tifara_untara25" },
-  { id:10, name:"Dede Juliansyah",        role:"Anggota Aktif",          tag:"Action",     rating:"99%", photo:"assets/img/dejul.png",         ig:"https://instagram.com/tifara_untara25" },
-  { id:11, name:"Dhava Adiyuda P.",       role:"Anggota Aktif",          tag:"Sci-Fi",     rating:"99%", photo:"assets/img/dhava.png",         ig:"https://instagram.com/tifara_untara25" },
-  { id:12, name:"Dimas Eka Saputra",      role:"Anggota Aktif",          tag:"Drama",      rating:"99%", photo:"assets/img/dimas-eka.png",     ig:"https://instagram.com/tifara_untara25" },
-  { id:13, name:"Dimas Maulaya S.",       role:"Anggota Aktif",          tag:"Comedy",     rating:"99%", photo:"assets/img/dimas-maulaya.png", ig:"https://instagram.com/tifara_untara25" },
-  { id:14, name:"Dini Fitriani",          role:"PJ Public Speaking",     tag:"Drama",      rating:"99%", photo:"assets/img/dini.png",          ig:"https://instagram.com/tifara_untara25" },
-  { id:15, name:"Dio Adha",               role:"Wakil Ketua",            tag:"Action",     rating:"99%", photo:"assets/img/dio.png",           ig:"https://instagram.com/tifara_untara25" },
-  { id:16, name:"Elis Amelia Contesa",    role:"Ketua Kelas",            tag:"Leadership", rating:"99%", photo:"assets/img/elis.png",          ig:"https://instagram.com/tifara_untara25" },
-  { id:17, name:"Fadly Irfansyah M.",     role:"PJ Aljabar Linear",      tag:"Sci-Fi",     rating:"99%", photo:"assets/img/ipan.png",          ig:"https://instagram.com/tifara_untara25" },
-  { id:18, name:"Fahmi Rizqy F.",         role:"Anggota Aktif",          tag:"Action",     rating:"99%", photo:"assets/img/fahmi.png",         ig:"https://instagram.com/tifara_untara25" },
-  { id:19, name:"Fathahillah Zakky",      role:"Anggota Aktif",          tag:"Mystery",    rating:"99%", photo:"assets/img/user.png",          ig:"https://instagram.com/tifara_untara25" },
-  { id:20, name:"Firsyha",                role:"Sekretaris",             tag:"Drama",      rating:"99%", photo:"assets/img/ica.png",           ig:"https://instagram.com/tifara_untara25" },
-  { id:21, name:"Intan Aulia M.",         role:"Anggota Aktif",          tag:"Romance",    rating:"99%", photo:"assets/img/intan.png",         ig:"https://instagram.com/tifara_untara25" },
-  { id:22, name:"Keisya Cintya Putri",    role:"Anggota Aktif",          tag:"Romance",    rating:"99%", photo:"assets/img/keisya.png",        ig:"https://instagram.com/tifara_untara25" },
-  { id:23, name:"Lia Noviana",            role:"Anggota Aktif",          tag:"Drama",      rating:"99%", photo:"assets/img/lia.png",           ig:"https://instagram.com/tifara_untara25" },
-  { id:24, name:"Rian Permana",           role:"Anggota Aktif",          tag:"Action",     rating:"99%", photo:"assets/img/rian.png",          ig:"https://instagram.com/tifara_untara25" },
-  { id:25, name:"Muhamad Bilal Islami",   role:"Anggota Aktif",          tag:"Thriller",   rating:"99%", photo:"assets/img/bilal.png",         ig:"https://instagram.com/tifara_untara25" },
-  { id:26, name:"Wahyu Putra Raihan",     role:"Anggota Aktif",          tag:"Action",     rating:"99%", photo:"assets/img/wahyu.png",         ig:"https://instagram.com/tifara_untara25" },
-  { id:27, name:"M. Nurul Furqon",        role:"PJ Agama",               tag:"Spiritual",  rating:"99%", photo:"assets/img/furqon.png",        ig:"https://instagram.com/tifara_untara25" },
-  { id:28, name:"Naufal Syauqi",          role:"Anggota Aktif",          tag:"Mystery",    rating:"99%", photo:"assets/img/nopal.png",         ig:"https://instagram.com/tifara_untara25" },
-  { id:29, name:"Rangga Bachrunisman",    role:"Anggota Aktif",          tag:"Action",     rating:"99%", photo:"assets/img/rangga.png",        ig:"https://instagram.com/tifara_untara25" },
-  { id:30, name:"Saefullah",              role:"Anggota Aktif",          tag:"Comedy",     rating:"99%", photo:"assets/img/ipul.png",          ig:"https://instagram.com/tifara_untara25" },
-  { id:31, name:"Samuel",                 role:"Anggota Aktif",          tag:"Drama",      rating:"99%", photo:"assets/img/samuel.png",        ig:"https://instagram.com/tifara_untara25" },
-  { id:32, name:"Zahra Hikayatul Aulia",  role:"Anggota Aktif",          tag:"Romance",    rating:"99%", photo:"assets/img/zahra.png",         ig:"https://instagram.com/tifara_untara25" },
+  { id:1,  name:"Abdurrahman",            role:"Anggota Aktif",                tag:"Drama",      rating:"99%", photo:"assets/img/abdurahman.png",    ig:"https://instagram.com/abdull_rhman07" },
+  { id:2,  name:"Aditya Hartono",         role:"Anggota Aktif",                tag:"Sci-Fi",     rating:"99%", photo:"assets/img/aditya.png",        ig:"https://instagram.com/tifara_untara25" },
+  { id:3,  name:"Ahmad Fadhlan Amin",     role:"PJ Algoritma & Struktur Data", tag:"Tech",       rating:"99%", photo:"assets/img/fadhlan.png",       ig:"https://instagram.com/dadidudedenn" },
+  { id:4,  name:"Alya Rosiana Rahayu",    role:"Anggota Aktif",                tag:"Romance",    rating:"99%", photo:"assets/img/alya.png",          ig:"https://instagram.com/alyarosianarahayu" },
+  { id:5,  name:"Anaz Urbanangta",        role:"Anggota Aktif",                tag:"Sci-Fi",     rating:"99%", photo:"assets/img/anaz.png",          ig:"https://instagram.com/nazavta" },
+  { id:6,  name:"Arvenal",                role:"Anggota Aktif",                tag:"Action",     rating:"99%", photo:"assets/img/arvenal.png",       ig:"https://instagram.com/arvenall_" },
+  { id:7,  name:"Attha Mauluna I. P.",    role:"Bendahara",                    tag:"Thriller",   rating:"99%", photo:"assets/img/luna.png",          ig:"https://instagram.com/lunathaa_" },
+  { id:8,  name:"Aulia Nur Ramadhani",    role:"Anggota Aktif",                tag:"Romance",    rating:"99%", photo:"assets/img/aulia.png",         ig:"https://instagram.com/tifara_untara25" },
+  { id:9,  name:"Chandra Elisa",          role:"Anggota Aktif",                tag:"Drama",      rating:"99%", photo:"assets/img/chandra.png",       ig:"https://instagram.com/c.alsyaaa" },
+  { id:10, name:"Dede Juliansyah",        role:"PJ Komputasi Numerik",         tag:"Sci-Fi",     rating:"99%", photo:"assets/img/dejul.png",         ig:"https://instagram.com/jlynsyh_69" },
+  { id:11, name:"Dhava Adiyuda P.",       role:"Anggota Aktif",                tag:"Action",     rating:"99%", photo:"assets/img/dhava.png",         ig:"https://instagram.com/bro_sanstay" },
+  { id:12, name:"Dimas Eka Saputra",      role:"Anggota Aktif",                tag:"Drama",      rating:"99%", photo:"assets/img/dimas-eka.png",     ig:"https://instagram.com/dmszka" },
+  { id:13, name:"Dimas Maulaya S.",       role:"PJ Kalkulus",                  tag:"Mystery",    rating:"99%", photo:"assets/img/dimas-maulaya.png", ig:"https://instagram.com/salvatoris_19" },
+  { id:14, name:"Dini Fitriani",          role:"Anggota Aktif",                tag:"Romance",    rating:"99%", photo:"assets/img/dini.png",          ig:"https://instagram.com/diniftaa" },
+  { id:15, name:"Dio Adha",               role:"Anggota Aktif",                tag:"Action",     rating:"99%", photo:"assets/img/dio.png",           ig:"https://instagram.com/dyoo_dha" },
+  { id:16, name:"Elis Amelia Contesa",    role:"Anggota Aktif",                tag:"Drama",      rating:"99%", photo:"assets/img/elis.png",          ig:"https://instagram.com/e.lisstsa_" },
+  { id:17, name:"Fadly Irfansyah M.",     role:"Anggota Aktif",                tag:"Sci-Fi",     rating:"99%", photo:"assets/img/ipan.png",          ig:"https://instagram.com/fannnta_" },
+  { id:18, name:"Fahmi Rizqy F.",         role:"Anggota Aktif",                tag:"Action",     rating:"99%", photo:"assets/img/fahmi.png",         ig:"https://instagram.com/f4hm1_kal" },
+  { id:19, name:"Fathahillah Zakky",      role:"Anggota Aktif",                tag:"Mystery",    rating:"99%", photo:"assets/img/user.png",          ig:"https://instagram.com/fathahillahzakky" },
+  { id:20, name:"Firsyha",                role:"PJ Pancasila",                 tag:"Drama",      rating:"99%", photo:"assets/img/ica.png",           ig:"https://instagram.com/_frsyha" },
+  { id:21, name:"Intan Aulia M.",         role:"Sekretaris",                   tag:"Drama",      rating:"99%", photo:"assets/img/intan.png",         ig:"https://instagram.com/aulinaaf" },
+  { id:22, name:"Keisya Cintya Putri",    role:"Wakil Ketua",                  tag:"Action",     rating:"99%", photo:"assets/img/keisya.png",        ig:"https://instagram.com/ksyctyptri" },
+  { id:23, name:"Lia Noviana",            role:"PJ Sistem Digital",            tag:"Tech",       rating:"99%", photo:"assets/img/lia.png",           ig:"https://instagram.com/vy_livianaaa" },
+  { id:24, name:"Rian Permana",           role:"Anggota Aktif",                tag:"Action",     rating:"99%", photo:"assets/img/rian.png",          ig:"https://instagram.com/rian_ppermana" },
+  { id:25, name:"Muhamad Bilal Islami",   role:"Anggota Aktif",                tag:"Thriller",   rating:"99%", photo:"assets/img/bilal.png",         ig:"https://instagram.com/mbilalislami" },
+  { id:26, name:"Wahyu Putra Raihan",     role:"PJ Etika Profesi",             tag:"Mystery",    rating:"99%", photo:"assets/img/wahyu.png",         ig:"https://instagram.com/wprr.23" },
+  { id:27, name:"M. Nurul Furqon",        role:"Anggota Aktif",                tag:"Spiritual",  rating:"99%", photo:"assets/img/furqon.png",        ig:"https://instagram.com/nurrr.q_" },
+  { id:28, name:"Naufal Syauqi",          role:"PJ Matematika Diskrit",        tag:"Mystery",    rating:"99%", photo:"assets/img/nopal.png",         ig:"https://instagram.com/naufal_n.s" },
+  { id:29, name:"Nurul Diva Adhaeni",     role:"Anggota Aktif",                tag:"Romance",    rating:"99%", photo:"assets/img/nurul.jpg",         ig:"https://instagram.com/_dipaw__" },
+  { id:30, name:"Rangga Bachrunisman",    role:"Anggota Aktif",                tag:"Action",     rating:"99%", photo:"assets/img/rangga.png",        ig:"https://instagram.com/r2.003_" },
+  { id:31, name:"Saefullah",              role:"Anggota Aktif",                tag:"Comedy",     rating:"99%", photo:"assets/img/ipul.png",          ig:"https://instagram.com/mhmdsaefllah" },
+  { id:32, name:"Samuel",                 role:"Ketua Kelas",                  tag:"Action",     rating:"99%", photo:"assets/img/samuel.png",        ig:"https://instagram.com/smlsmjtk" },
+  { id:33, name:"Zahra Hikayatul Aulia",  role:"PJ English for Engineering",   tag:"Romance",    rating:"99%", photo:"assets/img/zahra.png",         ig:"https://instagram.com/zhrhkytl_" },
 ];
 
 const STRUCTURE = [
-  { role:"Wali Kelas",           name:"Saryani, S.Kom., M.TI",       level:0, icon:"👑" },
-  { role:"Ketua Kelas",          name:"Elis Amelia Contesa",          level:1, icon:"⭐" },
-  { role:"Wakil Ketua",          name:"Dio Adha",                     level:1, icon:"⭐" },
-  { role:"Sekretaris",           name:"Firsyha",                      level:2, icon:"📝" },
-  { role:"Bendahara",            name:"Attha Mauluna Isnainy Putrie", level:2, icon:"💰" },
-  { role:"PJ Agama",             name:"Muhammad Nurul Furqon",        level:3, icon:"🕌" },
-  { role:"PJ Aljabar Linear",    name:"Fadly Irfansyah Mutaqin",      level:3, icon:"📐" },
-  { role:"PJ Fisika Dasar",      name:"Anaz Urbanangta",              level:3, icon:"⚛️" },
-  { role:"PJ Dasar Pemrograman", name:"Aditya Hartono",               level:3, icon:"💻" },
-  { role:"PJ Bahasa Indonesia",  name:"Chandra Elisa",                level:3, icon:"📚" },
-  { role:"PJ Public Speaking",   name:"Dini Fitriani",                level:3, icon:"🎤" },
-  { role:"PJ Teknologi Platform",name:"Alya Rosiana Rahayu",          level:3, icon:"🖥️" },
+  { role:"Wali Kelas",                     name:"Kevin Septianzah, S.Kom., M.Kom", level:0, icon:"👨‍🏫" },
+  { role:"Ketua Kelas",                    name:"Samuel",                          level:1, icon:"👑" },
+  { role:"Wakil Ketua",                    name:"Keisya Cintya Putri",             level:1, icon:"⭐" },
+  { role:"Sekretaris",                     name:"Intan Aulia M.",                  level:2, icon:"📝" },
+  { role:"Bendahara",                      name:"Attha Mauluna Isnainy Putrie",    level:2, icon:"💰" },
+  { role:"PJ Pancasila",                   name:"Firsyha",                         level:3, icon:"🏛️" },
+  { role:"PJ Komputasi Numerik",           name:"Dede Juliansyah",                 level:3, icon:"🧮" },
+  { role:"PJ English for Enginering",      name:"Zahra Hikayatul Aulia",           level:3, icon:"🗣️" },
+  { role:"PJ Algoritma dan Struktur Data", name:"Ahmad Fadhlan Amin",              level:3, icon:"💻" },
+  { role:"PJ Sistem Digital",              name:"Lia Noviana",                     level:3, icon:"🔌" },
+  { role:"PJ Etika Profesi",               name:"Wahyu Putra Raihan",              level:3, icon:"⚖️" },
+  { role:"PJ Matematika Diskrit",          name:"Naufal Syauqi",                   level:3, icon:"📊" },
+  { role:"PJ Kalkulus",                    name:"Dimas Maulaya S.",                level:3, icon:"📈" },
 ];
 
 const ACHIEVEMENTS = [
@@ -416,13 +445,92 @@ function closePhotoModal() {
   document.body.style.overflow = "";
 }
 
+const audio = document.getElementById('bgMusic');
+  const musicIcon = document.getElementById('musicIcon');
+  let isPlaying = false;
+
+  function toggleMusic() {
+    if (isPlaying) {
+      audio.pause();
+      musicIcon.innerHTML = "🔈"; // Icon Mute
+    } else {
+      audio.play();
+      musicIcon.innerHTML = "🔊"; // Icon Play
+    }
+    isPlaying = !isPlaying;
+  }
+
+  // Menangani Auto-play: Musik akan jalan otomatis saat user pertama kali klik di mana saja
+  window.addEventListener('click', () => {
+    if (!isPlaying) {
+      audio.play().then(() => {
+        isPlaying = true;
+        musicIcon.innerHTML = "🔊";
+      }).catch(error => console.log("Autoplay dicegah browser"));
+    }
+  }, { once: true }); // {once: true} artinya trigger ini cuma jalan sekali
+
 /* ═══════════════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════════════ */
+function applyAdminAbout() {
+  const d = window._adminAbout;
+  if (!d) return;
+  // Update about section
+  const h3 = document.querySelector('.about-h3');
+  if (h3) h3.textContent = (d.name||'TIFARA') + ': NEVER DIE';
+  const desc = document.querySelector('.about-desc');
+  if (desc) desc.textContent = d.desc||'';
+  // Update detail rows
+  const rows = document.querySelectorAll('.detail-row .detail-val');
+  if (rows[0]) rows[0].textContent = d.genre||'';
+  if (rows[1]) rows[1].textContent = d.year||'';
+  if (rows[2]) rows[2].textContent = d.rating||'';
+  if (rows[3]) { rows[3].textContent = (d.status||'Ongoing') + ' ✦'; rows[3].style.color = '#46d369'; }
+  // Update hero meta
+  const metas = document.querySelectorAll('.hero-meta .year');
+  if (metas[0]) metas[0].textContent = d.year||'2026';
+  if (metas[1]) metas[1].textContent = d.season||'1 Season';
+  const badgeTv = document.querySelector('.hero-meta .badge-tv');
+  if (badgeTv) badgeTv.textContent = d.rating||'TV-G';
+  // Update hero desc
+  const heroDesc = document.querySelector('.hero-desc');
+  if (heroDesc && d.tagline) heroDesc.textContent = d.tagline;
+  // Update social links
+  const socials = document.querySelectorAll('.social-link');
+  if (socials[0] && d.ig) {
+    socials[0].href = d.ig;
+    const handle = socials[0].querySelector('.social-handle');
+    if (handle) handle.textContent = d.igHandle||'';
+  }
+  if (socials[1] && d.tt) {
+    socials[1].href = d.tt;
+    const handle = socials[1].querySelector('.social-handle');
+    if (handle) handle.textContent = d.ttHandle||'';
+  }
+  // Update footer social
+  const footerLinks = document.querySelectorAll('.footer-link.red');
+  if (footerLinks[0] && d.ig) footerLinks[0].href = d.ig;
+  if (footerLinks[1] && d.tt) footerLinks[1].href = d.tt;
+  // Update footer contact
+  const contacts = document.querySelectorAll('.footer-inner .footer-grid div:last-child div');
+  if (contacts[0] && d.location) contacts[0].textContent = d.location;
+  if (contacts[1] && d.email)   { contacts[1].textContent = d.email; contacts[1].style.color='#e50914'; }
+  // Update stat counts
+  const statNums = document.querySelectorAll('.stat-num');
+  if (statNums[0]) statNums[0].textContent = MEMBERS.length;
+  const putra = MEMBERS.filter(m=>m.gender==='Putra').length;
+  const putri = MEMBERS.filter(m=>m.gender==='Putri').length;
+  if (statNums[1]) statNums[1].textContent = putra || 21;
+  if (statNums[2]) statNums[2].textContent = putri || 12;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+  loadAdminData();
   initNavbar();
   buildHeroGrid();
   buildStructure();
   buildMembers();
   buildAchievements();
+  applyAdminAbout();
 });

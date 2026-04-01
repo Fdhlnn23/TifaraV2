@@ -8,6 +8,14 @@
   <link rel="icon" type="image/png" href="assets/img/logonetflix.png">
 </head>
 <body>
+<audio id="bgMusic" loop>
+  <source src="assets/audio/music1.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+
+<div id="musicControl" onclick="toggleMusic()" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; background: rgba(0,0,0,0.7); border: 1px solid #e50914; border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s;">
+  <span id="musicIcon" style="color: white; font-size: 20px;">🔈</span>
+</div>
 
 <!-- ══════════════════════════════════
      NAVBAR
@@ -26,6 +34,7 @@
       <button onclick="scrollToSection('struktur')" data-sec="struktur">Struktur</button>
       <button onclick="scrollToSection('anggota')"  data-sec="anggota">Anggota</button>
       <button onclick="scrollToSection('prestasi')" data-sec="prestasi">Prestasi</button>
+      <button onclick="window.location.href='admin.html'">Admin</button>
     </div>
 
     <div class="nav-avatar">TF</div>
@@ -39,6 +48,7 @@
     <button onclick="scrollToSection('struktur'); toggleMenu()">Struktur</button>
     <button onclick="scrollToSection('anggota');  toggleMenu()">Anggota</button>
     <button onclick="scrollToSection('prestasi'); toggleMenu()">Prestasi</button>
+    <button onclick="window.location.href='admin.html'">Admin</button>
   </div>
 </nav>
 
@@ -68,7 +78,7 @@
     </div>
 
     <p class="hero-desc">
-      Kisah 32 mahasiswa luar biasa yang berjuang, bertumbuh, dan menciptakan kenangan
+      Kisah 33 mahasiswa luar biasa yang berjuang, bertumbuh, dan menciptakan kenangan
       tak terlupakan bersama. Sebuah series tentang persahabatan, prestasi, dan petualangan
       kampus yang nyata.
     </p>
@@ -105,14 +115,14 @@
         <div class="about-label">SYNOPSIS</div>
         <h3 class="about-h3">TIFARA: NEVER DIE</h3>
         <p class="about-desc">
-          Sebuah kisah nyata tentang 32 mahasiswa yang bersatu dalam satu kelas bernama TIFARA.
+          Sebuah kisah nyata tentang 33 mahasiswa yang bersatu dalam satu kelas bernama TIFARA.
           Penuh dengan dinamika pertemanan, perjuangan akademik, dan momen-momen yang akan
           dikenang selamanya. Di sini, setiap hari adalah episode baru yang penuh kejutan.
         </p>
         <div class="about-stats">
-          <div><div class="stat-num">32</div><div class="stat-label">Karakter</div></div>
+          <div><div class="stat-num">33</div><div class="stat-label">Karakter</div></div>
           <div><div class="stat-num">21</div><div class="stat-label">Putra</div></div>
-          <div><div class="stat-num">11</div><div class="stat-label">Putri</div></div>
+          <div><div class="stat-num">12</div><div class="stat-label">Putri</div></div>
         </div>
       </div>
 
@@ -131,7 +141,7 @@
             <div class="social-icon" style="background:linear-gradient(135deg,#f09433,#dc2743,#bc1888)">📸</div>
             <div>
               <div class="social-name">Instagram</div>
-              <div class="social-handle">@tifara_untara</div>
+              <div class="social-handle">@tifara_untara25</div>
             </div>
             <span class="social-arrow">›</span>
           </a>
@@ -209,11 +219,12 @@
         <button class="footer-link" onclick="scrollToSection('struktur')">struktur</button>
         <button class="footer-link" onclick="scrollToSection('anggota')">anggota</button>
         <button class="footer-link" onclick="scrollToSection('prestasi')">prestasi</button>
+        <button class="footer-link" onclick="window.location.href='admin.html'">Admin</button>
       </div>
 
       <div>
         <div class="footer-heading">SOSIAL</div>
-        <a class="footer-link red" href="https://www.instagram.com/tifara_untara" target="_blank" rel="noreferrer">Instagram</a>
+        <a class="footer-link red" href="https://www.instagram.com/tifara_untara25" target="_blank" rel="noreferrer">Instagram</a>
         <a class="footer-link red" href="https://www.tiktok.com/@tifara_untara"   target="_blank" rel="noreferrer">TikTok</a>
       </div>
 
